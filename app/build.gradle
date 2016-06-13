@@ -29,4 +29,6 @@ dependencies {
     compile 'com.f2prateek.rx.preferences:rx-preferences:1.0.1'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.2'
+    compile 'com.squareup.okio:okio:1.6.0'
 }
