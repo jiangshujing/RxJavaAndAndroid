@@ -6,8 +6,10 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -31,54 +33,54 @@ public class OperatorMsgNumberFilterDemo extends AppCompatActivity {
         //take 发送前三个数据
         Observable mObservableTake = mObservable.take(3);
 
-        mObservableTake.subscribe(new Action1() {
+        mObservableTake.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("take == ", o.toString());
             }
         });
 
         //takeLast 发送后三个数据
         Observable mObservableTakeLast = mObservable.takeLast(3);
-        mObservableTakeLast.subscribe(new Action1() {
+        mObservableTakeLast.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("takeLast",o.toString());
             }
         });
 
         //first 只发送第一个数据
-        Observable mObservableFirst = mObservable.first();
-        mObservableFirst.subscribe(new Action1() {
+        Single mObservableFirst = mObservable.first(1);
+        mObservableFirst.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("first === ",o.toString());
             }
         });
 
         //last 只发送最后一个数据
-        Observable mObservableLast = mObservable.last();
-        mObservableLast.subscribe(new Action1() {
+        Single mObservableLast = mObservable.last(7);
+        mObservableLast.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("last === ",o.toString());
             }
         });
 
         //skip 跳过前2个数据发送后面的数据
         Observable mObservableSkip = mObservable.skip(2);
-        mObservableSkip.subscribe(new Action1() {
+        mObservableSkip.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("skip === ",o.toString());
             }
         });
 
         //skipLast 跳过最后2个数据发送后面的数据
         Observable mObservableSkipLast = mObservable.skipLast(2);
-        mObservableSkipLast.subscribe(new Action1() {
+        mObservableSkipLast.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("skipLast === ",o.toString());
             }
         });

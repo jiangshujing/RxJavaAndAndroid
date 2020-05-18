@@ -9,10 +9,11 @@ import android.widget.ProgressBar;
 
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by jsj on 16/6/13.
@@ -21,7 +22,7 @@ public class ProgressBarActivity extends AppCompatActivity implements View.OnCli
 
 
     private ProgressBar progressbar;
-    private Subscriber subscriber;
+    private Observer observer;
     private Observable mObservable;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +47,23 @@ public class ProgressBarActivity extends AppCompatActivity implements View.OnCli
     /**
      * 创建订阅者
      */
-    private Subscriber createSubscriber() {
-        subscriber = new Subscriber<Long>() {
-            @Override
-            public void onCompleted() {
-                Log.d("onCompleted === ", "");
-            }
+    private Observer createSubscriber() {
+        observer = new Observer<Long>() {
 
             @Override
             public void onError(Throwable e) {
                 Log.d("onError === ", "");
                 mObservable = null;
+            }
+
+            @Override
+            public void onComplete() {
+                Log.d("onCompleted === ", "");
+            }
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
             }
 
             @Override
@@ -66,14 +73,14 @@ public class ProgressBarActivity extends AppCompatActivity implements View.OnCli
             }
         };
 
-        return subscriber;
+        return observer;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscriber != null) {
-            subscriber.unsubscribe();
-        }
+//        if (observer != null) {
+//            observer.unsubscribe();
+//        }
     }
 }

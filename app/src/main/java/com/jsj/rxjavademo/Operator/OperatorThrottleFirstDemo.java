@@ -8,9 +8,10 @@ import com.jsj.rxjavademo.R;
 
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -18,7 +19,7 @@ import rx.functions.Action1;
  */
 public class OperatorThrottleFirstDemo extends AppCompatActivity {
 
-    Subscription mSubscription;
+    private Disposable mDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +28,11 @@ public class OperatorThrottleFirstDemo extends AppCompatActivity {
 
 
         //使用interval 达到每秒发送一个，在3秒内只取一个事件，其他的丢失
-        mSubscription = Observable.interval(1, TimeUnit.SECONDS)
+        mDisposable = Observable.interval(1, TimeUnit.SECONDS)
                 .throttleFirst(3, TimeUnit.SECONDS)
-                .subscribe(new Action1<Long>() {
+                .subscribe(new Consumer<Long>() {
                     @Override
-                    public void call(Long aLong) {
+                    public void accept(Long aLong) throws Exception {
                         Log.d("throttleFirst == ", aLong.toString());
                     }
                 });
@@ -40,8 +41,8 @@ public class OperatorThrottleFirstDemo extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mSubscription != null) {
-            mSubscription.unsubscribe();
+        if (mDisposable != null) {
+            mDisposable.dispose();
         }
     }
 }

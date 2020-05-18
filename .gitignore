@@ -83,3 +83,13 @@ build.xml
 ant.properties
 profiles_settings.xml
 *.DS_Store
+
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/app/src/main/java/com/northland/ready/gen
+/captures
+.externalNativeBuild

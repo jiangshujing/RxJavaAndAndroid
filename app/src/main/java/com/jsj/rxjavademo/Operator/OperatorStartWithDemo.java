@@ -8,8 +8,9 @@ import com.jsj.rxjavademo.R;
 
 import java.util.ArrayList;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -24,10 +25,10 @@ public class OperatorStartWithDemo extends AppCompatActivity {
 
 
         Observable mObservable = Observable.just("aa","bb","cc");
-        Observable mObservableStartWith = mObservable.startWith("11", "22");
-        mObservableStartWith.subscribe(new Action1() {
+        Observable mObservableStartWith = mObservable.startWith(mObservable);
+        mObservableStartWith.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("StartWith 插入普通数据", o.toString());
             }
         });
@@ -38,13 +39,12 @@ public class OperatorStartWithDemo extends AppCompatActivity {
         list.add("ww");
         list.add("tt");
 
-        mObservable.startWith(Observable.from(list))
-                .subscribe(new Action1() {
+        mObservable.startWith(Observable.fromIterable(list))
+                .subscribe(new Consumer() {
                     @Override
-                    public void call(Object o) {
-                        Log.d("startWith 插入Observable 对象",o.toString());
+                    public void accept(Object o) throws Exception {
+                        Log.d("startWith 插入Observable",o.toString());
                     }
                 });
     }
-
 }

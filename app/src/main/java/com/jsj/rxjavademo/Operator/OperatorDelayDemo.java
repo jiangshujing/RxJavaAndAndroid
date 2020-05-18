@@ -8,8 +8,9 @@ import com.jsj.rxjavademo.R;
 
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -26,13 +27,11 @@ public class OperatorDelayDemo extends AppCompatActivity {
         Observable mObservable = Observable.just("aa","bb","cc");
         //延迟数据发射的时间，仅仅延时一次，也就是发射第一个数据前延时。发射后面的数据不延时
         Observable mObservableDelay = mObservable.delay(2, TimeUnit.SECONDS);//延迟两秒发送
-        mObservableDelay.subscribe(new Action1() {
+        mObservableDelay.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("delay ＝＝", o.toString());
             }
         });
-
     }
-
 }

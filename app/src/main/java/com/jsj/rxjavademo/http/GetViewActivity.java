@@ -10,16 +10,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jsj.rxjavademo.R;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class GetViewActivity extends AppCompatActivity implements View.OnClickListener {
@@ -45,7 +48,6 @@ public class GetViewActivity extends AppCompatActivity implements View.OnClickLi
         Button bt_getHtml = (Button) findViewById(R.id.bt_getHtml);
         ll_progress = (LinearLayout) findViewById(R.id.ll_progress);
         bt_getHtml.setOnClickListener(this);
-
     }
 
 
@@ -54,21 +56,21 @@ public class GetViewActivity extends AppCompatActivity implements View.OnClickLi
         getHtml()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())//ui线程
-                .subscribe(new Subscriber<String>() {
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                        ll_progress.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
+                .subscribe(new Observer<String>() {
 
                     @Override
                     public void onError(Throwable e) {
                         ll_progress.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
@@ -81,9 +83,9 @@ public class GetViewActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private Observable<String> getHtml() {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
                 //创建okHttpClient对象
                 mOkHttpClient = new OkHttpClient();
                 //创建一个Request
@@ -92,7 +94,7 @@ public class GetViewActivity extends AppCompatActivity implements View.OnClickLi
                         .build();
                 String json = execute2String(request);
                 Log.d(TAG, "json =====" + json);
-                setData(subscriber, json);
+                setData(e, json);
             }
         }).subscribeOn(Schedulers.io());//处理数据在子线程
     }
@@ -100,17 +102,17 @@ public class GetViewActivity extends AppCompatActivity implements View.OnClickLi
     /**
      * 处理给观察者发送的数据
      *
-     * @param subscriber
+     * @param e
      * @param json
      */
-    private void setData(Subscriber<? super String> subscriber, String json) {
+    private void setData(ObservableEmitter<String> e, String json) {
         if (TextUtils.isEmpty(json)) {
-            subscriber.onError(new Throwable("not data"));
-            subscriber.onCompleted();
+            e.onError(new Throwable("not data"));
+            e.onComplete();
             return;
         }
-        subscriber.onNext(json);
-        subscriber.onCompleted();
+        e.onNext(json);
+        e.onComplete();
     }
 
 

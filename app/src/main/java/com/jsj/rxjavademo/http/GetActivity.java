@@ -10,17 +10,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jsj.rxjavademo.R;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class GetActivity extends AppCompatActivity implements View.OnClickListener {
@@ -50,30 +54,46 @@ public class GetActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        getHtml().observeOn(AndroidSchedulers.mainThread())//ui线程
-                .subscribe(new Observer<String>() {
+        getHtml()
+                .flatMap(new Function<String, ObservableSource<String>>() {
                     @Override
-                    public void onCompleted() {
+                    public ObservableSource<String> apply(String s) throws Exception {
+                        return Observable.just("flatmap ::: " + s );
                     }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//ui线程
+                .subscribe(new Observer<String>() {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(GetActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(GetActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
                     }
 
                     @Override
                     public void onNext(String s) {
-                        Log.d("onNext =====",s);
+                        Log.d("onNext =====", s);
                         mTv.setText(s);
                     }
                 });
+
+
     }
 
 
     private Observable<String> getHtml() {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+        return Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
                 //创建okHttpClient对象
                 mOkHttpClient = new OkHttpClient();
                 //创建一个Request
@@ -81,25 +101,26 @@ public class GetActivity extends AppCompatActivity implements View.OnClickListen
                         .url(mBaseUrl)
                         .build();
                 String json = execute2String(request);
-                Log.d(TAG,"json ====="+json);
-                setData(subscriber, json);
+                Log.d(TAG, "json =====" + json);
+                setData(e, json);
             }
         }).subscribeOn(Schedulers.io());//处理数据在子线程
     }
 
     /**
      * 处理给观察者发送的数据
-     * @param subscriber
+     *
+     * @param s
      * @param json
      */
-    private void setData(Subscriber<? super String> subscriber, String json) {
+    private void setData(ObservableEmitter<String> s, String json) {
         if (TextUtils.isEmpty(json)) {
-            subscriber.onError(new Throwable("not data"));
-            subscriber.onCompleted();
+            s.onError(new Throwable("not data"));
+            s.onComplete();
             return;
         }
-        subscriber.onNext(json);
-        subscriber.onCompleted();
+        s.onNext(json);
+        s.onComplete();
     }
 
 

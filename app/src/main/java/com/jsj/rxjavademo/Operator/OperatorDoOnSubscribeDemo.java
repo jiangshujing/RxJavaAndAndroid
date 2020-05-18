@@ -6,11 +6,14 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action0;
-import rx.schedulers.Schedulers;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by jsj on 16/6/6.
@@ -34,28 +37,34 @@ public class OperatorDoOnSubscribeDemo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable.create(new Observable.OnSubscribe<String>() {
+        Observable.create(new ObservableOnSubscribe<String>() {
             @Override
-            public void call(Subscriber subscriber) {
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
 
             }
         })
                 .subscribeOn(Schedulers.io())
-                .doOnSubscribe(new Action0() {
+                .doOnSubscribe(new Consumer() {
                     @Override
-                    public void call() {
+                    public void accept(Object o) throws Exception {
                         //更新ui 需要在主线程执行
                     }
                 })
                 .subscribeOn(AndroidSchedulers.mainThread())//指定主线程
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mySubscriber);
+                .subscribe(observer);
     }
 
-    //创建订阅者
-    Subscriber<String> mySubscriber = new Subscriber<String>() {
+    //创建观察者
+    Observer<String> observer = new Observer<String>() {
         @Override
-        public void onCompleted() {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(String value) {
+            Log.e("onNext", value);
         }
 
         @Override
@@ -64,8 +73,8 @@ public class OperatorDoOnSubscribeDemo extends AppCompatActivity {
         }
 
         @Override
-        public void onNext(String s) {
-            Log.e("onCompleted", s);
+        public void onComplete() {
+
         }
     };
 }

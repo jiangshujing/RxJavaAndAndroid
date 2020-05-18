@@ -6,9 +6,11 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.Observer;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -23,17 +25,13 @@ public class OperatorBufferDemo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable mObservable = Observable.just("1", "2", "3", "4");
-        mObservable.doOnNext(new Action1() {
+        Observable<String> mObservable = Observable.just("1", "2", "3", "4");
+        mObservable.doOnNext(new Consumer<String>() {
             @Override
-            public void call(Object o) {
-                Log.d("doOnNext  call",o.toString());
-            }
-        }).subscribe(new Observer() {
-            @Override
-            public void onCompleted() {
+            public void accept(String s) throws Exception {
 
             }
+        }).subscribe(new Observer<String>() {
 
             @Override
             public void onError(Throwable e) {
@@ -41,8 +39,18 @@ public class OperatorBufferDemo extends AppCompatActivity {
             }
 
             @Override
-            public void onNext(Object o) {
-                Log.d("onNext",o.toString());
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(String value) {
+                Log.d("onNext",value.toString());
             }
         });
     }

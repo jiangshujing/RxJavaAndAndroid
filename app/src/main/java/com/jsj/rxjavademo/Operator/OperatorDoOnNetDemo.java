@@ -6,9 +6,11 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.Observer;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -22,17 +24,14 @@ public class OperatorDoOnNetDemo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Observable mObservable = Observable.just("1", "2", "3", "4");
-        mObservable.doOnNext(new Action1() {
+        Observable<String> mObservable = Observable.just("1", "2", "3", "4");
+        mObservable.doOnNext(new Consumer<String>() {
             @Override
-            public void call(Object o) {
+            public void accept(String o) throws Exception {
                 Log.d("doOnNext  call",o.toString());
             }
-        }).subscribe(new Observer() {
-            @Override
-            public void onCompleted() {
 
-            }
+        }).subscribe(new Observer<String>() {
 
             @Override
             public void onError(Throwable e) {
@@ -40,7 +39,17 @@ public class OperatorDoOnNetDemo extends AppCompatActivity {
             }
 
             @Override
-            public void onNext(Object o) {
+            public void onComplete() {
+
+            }
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(String o) {
                 Log.d("onNext",o.toString());
             }
         });

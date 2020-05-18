@@ -6,8 +6,10 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by jsj on 16/6/6.
@@ -28,20 +30,20 @@ public class OperatorElementAtAndElementAtOrDefaultDemo extends AppCompatActivit
 
 
         Observable mObservable = Observable.just(1, 2, 3, 4, 5, 6, 7);
-        Observable mObservableElementAt = mObservable.elementAt(2);
-        mObservableElementAt.subscribe(new Action1() {
+        Maybe mObservableElementAt = mObservable.elementAt(2);
+        mObservableElementAt.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("elementAt === ", o.toString());
             }
         });
 
 //        elementAtOrDefault( int n , Object default ) 发送数据序列中第n个数据 ，序列号从0开始。
 //        如果序列中没有该序列号，则发送默认值
-        Observable mObservableElementAtOrDefault = mObservable.elementAtOrDefault(8,0);
-        mObservableElementAtOrDefault.subscribe(new Action1() {
+        Single mObservableElementAtOrDefault = mObservable.elementAt(8,0);
+        mObservableElementAtOrDefault.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("elementAtOrDefault === ",o.toString());
             }
         });

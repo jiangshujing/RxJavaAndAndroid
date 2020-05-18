@@ -8,8 +8,9 @@ import com.jsj.rxjavademo.R;
 
 import java.util.ArrayList;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -32,21 +33,21 @@ public class OperatorDistinctDemo extends AppCompatActivity {
         list.add("2");
         list.add("1");
 
-        Observable.from(list)
+        Observable.fromArray(list)
                 .distinct()
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<ArrayList<String>>() {
                     @Override
-                    public void call(String s) {
-                        Log.d("distinct == ", s);
+                    public void accept(ArrayList<String> strings) throws Exception {
+                        Log.d("distinct == ", strings.toString());
                     }
                 });
 
-        Observable.from(list)
+        Observable.fromArray(list)
                 .distinctUntilChanged()//过滤连续重复的数据
-                .subscribe(new Action1<String>() {
+                .subscribe(new Consumer<ArrayList<String>>() {
                     @Override
-                    public void call(String s) {
-                        Log.d("distinctUntilChange == ", s);
+                    public void accept(ArrayList<String> strings) throws Exception {
+                        Log.d("distinctUntilChange == ", strings.toString());
                     }
                 });
 

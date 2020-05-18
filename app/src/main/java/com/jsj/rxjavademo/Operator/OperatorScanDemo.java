@@ -6,9 +6,10 @@ import android.util.Log;
 
 import com.jsj.rxjavademo.R;
 
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func2;
+import io.reactivex.Observable;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
+
 
 /**
  * Created by jsj on 16/6/6.
@@ -24,16 +25,17 @@ public class OperatorScanDemo extends AppCompatActivity {
 
         Observable mObservable = Observable.just(1, 2, 3, 4, 5);
         //返回相加结果
-        Observable mObservableScan = mObservable.scan(new Func2<Integer, Integer, Integer>() {
+        Observable mObservableScan = mObservable.scan(new BiFunction<Integer, Integer, Integer>() {
             @Override
-            public Integer call(Integer o, Integer o2) {
-                return o + o2;
+            public Integer apply(Integer integer, Integer integer2) throws Exception {
+                return integer + integer2;
             }
+
         });
 
-        mObservableScan.subscribe(new Action1() {
+        mObservableScan.subscribe(new Consumer() {
             @Override
-            public void call(Object o) {
+            public void accept(Object o) throws Exception {
                 Log.d("scan == ", o.toString());
             }
         });
